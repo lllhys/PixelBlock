@@ -28,6 +28,7 @@ class PixelMatrixShow():
         :param color: 32bit color
         :return: TK color
         '''
+        # return '#%02x%02x%02x'%(color[0],color[1],color[2])
         return '#%06x' % color
 
     def set_one(self, position, color):
