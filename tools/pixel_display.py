@@ -2,25 +2,29 @@ import time
 from tkinter import *
 import random
 
-class PixelMatrixShow():
-    # 建立一个框架对象tk
-    tk = Tk()
-    # 建立一个画布对象canvas，属于tk对象
-    canvas = Canvas(tk, width=640, height=160)
-    # 将画布对象更新显示在框架中
-    canvas.pack()
+class PixelDisplay():
 
-    def __init__(self):
+    shape = (8,32)
+
+    def __init__(self,shape=(8,32),pixel_size=20):
+        self.shape = shape
+        # 建立一个框架对象tk
+        self.tk = Tk(className='PixelDisplay')
+        # 建立一个画布对象canvas，属于tk对象
+        self.canvas = Canvas(self.tk, width=shape[1]*pixel_size, height=shape[0]*pixel_size)
+        # 将画布对象更新显示在框架中
+        self.canvas.pack()
         # 初始化像素矩阵
-        # 每个像素20*20
         self.rectangle_list = []
-        for i in range(0, 8):
+        for i in range(0, shape[0]):
             line_list = []
-            for j in range(0, 32):
-                re = self.canvas.create_rectangle(j * 20, i * 20, (j + 1) * 20, (i + 1) * 20, outline='white',
+            for j in range(0, shape[1]):
+                re = self.canvas.create_rectangle(j * pixel_size, i * pixel_size, (j + 1) * pixel_size, (i + 1) * pixel_size, outline='white',
                                                   fill='black')
                 line_list.append(re)
             self.rectangle_list.append(line_list)
+
+
 
     def get_hex_color(self, color):
         '''
@@ -47,8 +51,8 @@ class PixelMatrixShow():
         :param color: 32bit color
         :return: None
         '''
-        for i in range(0, 8):
-            for j in range(0, 32):
+        for i in range(0, self.shape[0]):
+            for j in range(0, self.shape[1]):
                 self.canvas.itemconfig(self.rectangle_list[i][j], fill=self.get_hex_color(color))
         self.tk.update()
 
@@ -58,8 +62,8 @@ class PixelMatrixShow():
         :param color_matrix: 颜色矩阵
         :return: None
         '''
-        for i in range(0, 8):
-            for j in range(0, 32):
+        for i in range(0, self.shape[0]):
+            for j in range(0, self.shape[1]):
                 self.canvas.itemconfig(self.rectangle_list[i][j], fill=self.get_hex_color(color_matrix[i][j]))
         self.tk.update()
     def clear_one(self, position):
@@ -76,36 +80,10 @@ class PixelMatrixShow():
         清除所有像素
         :return: None
         '''
-        for i in range(0, 8):
-            for j in range(0, 32):
+        for i in range(0, self.shape[0]):
+            for j in range(0, self.shape[1]):
                 self.canvas.itemconfig(self.rectangle_list[i][j], fill='black')
         self.tk.update()
 
     def idle(self):
         self.canvas.mainloop()
-
-
-
-if __name__ == '__main__':
-    pixel = PixelMatrixShow()
-    pixel.set_one(7, 31, (0,255, 0))
-    time.sleep(2)
-
-
-    color_matrix = []
-    for i in range(0,8):
-        color_matrix_line = []
-        for j in range(0,32):
-            r = random.randint(0,255)
-            g = random.randint(0,255)
-            b = random.randint(0,255)
-            color_matrix_line.append((r,g,b))
-        color_matrix.append(color_matrix_line)
-    pixel.set_all(color_matrix)
-    time.sleep(4)
-
-    pixel.set_all_same((200, 120, 160))
-    time.sleep(2)
-
-    pixel.clear_all()
-    pixel.canvas.mainloop()
